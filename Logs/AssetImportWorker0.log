@@ -2537,3 +2537,35 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 [usbmuxd] Attached: 1375 00008101-0006489C2131003A
 [usbmuxd] Detached: 1375 00008101-0006489C2131003A
+========================================================================
+Received Import Request.
+  Time since last request: 25592.235014 seconds.
+  path: Assets/Scripts/CardModel.cs
+  artifactKey: Guid(c7b3caf961f004c12afd52780863e792) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/CardModel.cs using Guid(c7b3caf961f004c12afd52780863e792) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '441a7b8f046806020f19b2b3e227af59') in 0.002202 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0
+========================================================================
+Received Import Request.
+  Time since last request: 313.988225 seconds.
+  path: Assets/Scripts/CardView.cs
+  artifactKey: Guid(43139bc16594a4183bb188fff035e0cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/CardView.cs using Guid(43139bc16594a4183bb188fff035e0cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7896f1689969e382db67d15f4542ce78') in 0.000785 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0
+========================================================================
+Received Import Request.
+  Time since last request: 323.268208 seconds.
+  path: Assets/Scripts/GameController.cs
+  artifactKey: Guid(2532abdffeb6847ab822a51c9118c3d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GameController.cs using Guid(2532abdffeb6847ab822a51c9118c3d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'aa0c1448ad057eeac51f8373b7e1b785') in 0.000399 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0
+========================================================================
+Received Import Request.
+  Time since last request: 108.309399 seconds.
+  path: Assets/Scripts/CardVM.cs
+  artifactKey: Guid(0e7833edbef4547a7aa499ce2b19310f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/CardVM.cs using Guid(0e7833edbef4547a7aa499ce2b19310f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd7e1150e5fc54d65570dad73fa660fa3') in 0.000648 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 0

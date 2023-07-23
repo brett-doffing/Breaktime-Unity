@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    public bool isFaceUp = true;
-    public int rank = 1;
-    public int suit = 1;
-
     public GameObject front;
     public GameObject back;
 
