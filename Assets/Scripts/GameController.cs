@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    List<GameObject> cards = new List<GameObject>();
+    List<GameObject> deck = new List<GameObject>();
     public GameObject cardPrefab;
 
     // Start is called before the first frame update
@@ -22,7 +22,6 @@ public class GameController : MonoBehaviour
                     );
                 
                 newCard.gameObject.GetComponent<CardView>().initVM(vm);
-                // cards.Add(newCard);
             }
         }
     }
@@ -44,6 +43,7 @@ public class GameController : MonoBehaviour
                     // Debug.Log(hit.collider.CompareTag);
                     CardView zeecard = hit.collider.GetComponent<CardView>();
                     if (zeecard != null) {
+                        deck.Add(zeecard.gameObject);
                         // Rotate
                         if (zeecard.viewModel.model.isFaceUp != true) {
                             iTween.RotateTo(
@@ -54,10 +54,10 @@ public class GameController : MonoBehaviour
                                     "easetype", iTween.EaseType.linear
                                 )
                             );
-                            iTween.MoveBy(
+                            iTween.MoveTo(
                                 zeecard.gameObject,
                                 iTween.Hash(
-                                    "z", 10,
+                                    "position", new Vector3(10, deck.Count * 0.02f, 0),
                                     "time", 0.1f,
                                     "easetype", iTween.EaseType.linear
                                 )
