@@ -12,9 +12,17 @@ public class GameController : MonoBehaviour
     {
         for (int i = 1; i <= 13; i++) {
             for (int j = 1; j <= 4; j++) {
-                GameObject newCard = Instantiate(cardPrefab, new Vector3(i * j * 0.5f, i * j * 0.01f, 0), Quaternion.Euler(0f, 0f, 180f));
-                newCard.gameObject.GetComponent<CardView>().viewModel.setProperties(i, j);
-                // shoe.cards.Add(newCard);
+                CardModel model = new CardModel(i, j);
+                CardVM vm = new CardVM(model);
+                // CardView card = new CardView(vm);
+                GameObject newCard = Instantiate(
+                        cardPrefab, 
+                        new Vector3(0, i * j * 0.02f, 0), 
+                        Quaternion.Euler(0f, 0f, 180f)
+                    );
+                
+                newCard.gameObject.GetComponent<CardView>().initVM(vm);
+                // cards.Add(newCard);
             }
         }
     }
@@ -41,7 +49,15 @@ public class GameController : MonoBehaviour
                             iTween.RotateTo(
                                 zeecard.gameObject,
                                 iTween.Hash(
-                                    "rotation", new Vector3(0, 0, 180),
+                                    "rotation", new Vector3(0, 0, -360),
+                                    "time", 0.1f,
+                                    "easetype", iTween.EaseType.linear
+                                )
+                            );
+                            iTween.MoveBy(
+                                zeecard.gameObject,
+                                iTween.Hash(
+                                    "z", 10,
                                     "time", 0.1f,
                                     "easetype", iTween.EaseType.linear
                                 )
@@ -50,7 +66,7 @@ public class GameController : MonoBehaviour
                             iTween.RotateTo(
                                 zeecard.gameObject,
                                 iTween.Hash(
-                                    "rotation", new Vector3(0, 0, -360),
+                                    "rotation", new Vector3(0, 0, 180),
                                     "time", 0.1f,
                                     "easetype", iTween.EaseType.linear
                                 )
