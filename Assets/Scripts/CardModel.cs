@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CardModel
 {
+    /// Prime numbers used to differentiate card rank for `intAnalyzerID` and `CCPokerAnalyzer` - (deuce=2,trey=3,four=5,five=7,...,ace=41)
+    int[] kPrimes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41};
+
     public bool isFaceUp = true;
     public int rank = 1;
     public int suit = 1;

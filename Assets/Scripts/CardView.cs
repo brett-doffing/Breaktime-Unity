@@ -6,11 +6,12 @@ public class CardView : MonoBehaviour
 {
     public GameObject front;
     public GameObject back;
-    public CardVM viewModel;
+    public CardVM viewModel = new CardVM();
 
-    public CardView(viewModel: CardVM) {
-        viewModel = viewModel
-    }
+    // public CardView(viewModel: CardVM) {
+    //     viewModel = viewModel;
+    // }
+
     // Start is called before the first frame update
     void Start()
     {
