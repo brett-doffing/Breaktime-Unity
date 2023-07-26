@@ -13,15 +13,14 @@ public class GameController : MonoBehaviour
         for (int i = 1; i <= 13; i++) {
             for (int j = 1; j <= 4; j++) {
                 CardModel model = new CardModel(i, j);
-                CardVM vm = new CardVM(model);
-                // CardView card = new CardView(vm);
+                CardController cardController = new CardController(model);
                 GameObject newCard = Instantiate(
                         cardPrefab, 
                         new Vector3(0, i * j * 0.02f, 0), 
                         Quaternion.Euler(0f, 0f, 180f)
                     );
                 
-                newCard.gameObject.GetComponent<CardView>().initVM(vm);
+                newCard.gameObject.GetComponent<CardView>().setupWith(cardController);
             }
         }
     }
@@ -45,7 +44,7 @@ public class GameController : MonoBehaviour
                     if (zeecard != null) {
                         deck.Add(zeecard.gameObject);
                         // Rotate
-                        if (zeecard.viewModel.model.isFaceUp != true) {
+                        if (zeecard.controller.model.isFaceUp != true) {
                             iTween.RotateTo(
                                 zeecard.gameObject,
                                 iTween.Hash(
@@ -72,7 +71,7 @@ public class GameController : MonoBehaviour
                                 )
                             );
                         }
-                        zeecard.viewModel.model.isFaceUp = !zeecard.viewModel.model.isFaceUp;
+                        zeecard.controller.model.isFaceUp = !zeecard.controller.model.isFaceUp;
                     }
                 }
             }

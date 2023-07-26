@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CardVM
+public class CardController
 {
     public CardModel model;
 
-    public CardVM() {}
+    public CardController() {}
 
-    public CardVM(CardModel model) {
+    public CardController(CardModel model) {
         this.model = model;
     }
 

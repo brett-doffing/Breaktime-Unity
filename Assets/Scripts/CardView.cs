@@ -6,15 +6,15 @@ public class CardView : MonoBehaviour
 {
     public GameObject front;
     public GameObject back;
-    public CardVM viewModel;
+    public CardController controller;
 
-    public void initVM(CardVM viewModel) {
-        this.viewModel = viewModel;
+    public void setupWith(CardController controller) {
+        this.controller = controller;
         setTextures();
     }
 
     public void setTextures() {
-        Texture[] textures = viewModel.getTextures();
+        Texture[] textures = controller.getTextures();
         Debug.Log(textures[0], textures[1]);
         Texture frontTexture = textures[0];
         Texture backTexture = textures[1];
