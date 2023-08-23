@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class GameController : MonoBehaviour
     public GameObject playableHand;
     public GameObject oppPlayableHand;
     public GameObject deck;
+    public GameCanvas gameCanvas;
     CardContainer _hand1;
     CardContainer _hand2;
     CardContainer _hand3;
@@ -31,10 +33,15 @@ public class GameController : MonoBehaviour
     CardContainer _playableHand;
     CardContainer _oppPlayableHand;
     CardContainer _deck;
+    PokerAnalyzer analyzer = new PokerAnalyzer();
+    List<HandModel> _playerEndGameHands;
+    List<HandModel> _oppEndGameHands;
     bool _canDraw = true;
     bool _isGameOn = true;
     int _playerTotalCards = 0;
     int _oppTotalCards = 0;
+    int _playerPoints = 0;
+    int _oppPoints = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -100,7 +107,6 @@ public class GameController : MonoBehaviour
     }
 
     public void handleGameTouch(int id) {
-        Debug.Log(id);
         switch (id)
         {
             case 0:
@@ -119,7 +125,6 @@ public class GameController : MonoBehaviour
                 }
                 break;
             default:
-                Debug.Log("Nothing selected");
                 break;
         }
     }
@@ -446,45 +451,97 @@ public class GameController : MonoBehaviour
     }
 
     IEnumerator performEndgame() {
+        analyzeGame();
         yield return new WaitForSeconds(1.0f);
-        animateFlipLastCard();
+        for (int i = 1; i <= 5; i++) {
+            GameObject card;
+            if (i == 1) 
+                card = _oppHand1.cards[4];
+            else if (i == 2) 
+                card = _oppHand2.cards[4];
+            else if (i == 3) 
+                card = _oppHand3.cards[4];
+            else if (i == 4) 
+                card = _oppHand4.cards[4];
+            else 
+                card = _oppHand5.cards[4];
+
+            animateFlipLastCard(card);
+            yield return new WaitForSeconds(1.0f);
+            showCanvasForHand(i - 1);
+            yield return new WaitForSeconds(2.0f);
+            gameCanvas.gameObject.SetActive(false);
+            yield return new WaitForSeconds(1.0f);
+        }
+        yield return new WaitForSeconds(1.0f);
+        showFinalCanvas();
+    }
+
+    void showCanvasForHand(int index) {
+        if (_playerEndGameHands[index].handWon) {
+            _playerPoints += 1;
+        } else if (_oppEndGameHands[index].handWon) {
+            _oppPoints += 1;
+        }
+        string playerText = _playerEndGameHands[index].getHandRankString();
+        string oppText = _oppEndGameHands[index].getHandRankString();
+        gameCanvas.showCanvasWith(playerText, oppText);
+    }
+
+    void showFinalCanvas() {
+        string oppText;
+        if (_playerPoints > _oppPoints) {
+            oppText = "You Won!";
+        } else if (_playerPoints < _oppPoints) {
+            oppText = "You Lost";
+        } else {
+            oppText = "Tie Game";
+        }
+        string playerText = String.Format("{0} - {1}", _playerPoints, _oppPoints);
+        gameCanvas.showCanvasWith(playerText, oppText, true);
+    }
+
+    void animateFlipLastCard(GameObject card) {
+        iTween.RotateTo(
+            card.gameObject,
+            iTween.Hash(
+                "rotation", new Vector3(0, 0, -360),
+                "time", 0.1f,
+                "delay", 0.1f,
+                "easetype", iTween.EaseType.linear
+            )
+        );
+        _isGameOn = true;
     }
 
     void analyzeGame() {
+        HandModel aHand1 = _hand1.getHandModel();
+        HandModel aHand2 = _hand2.getHandModel();
+        HandModel aHand3 = _hand3.getHandModel();
+        HandModel aHand4 = _hand4.getHandModel();
+        HandModel aHand5 = _hand5.getHandModel();
+        HandModel aOppHand1 = _oppHand1.getHandModel();
+        HandModel aOppHand2 = _oppHand2.getHandModel();
+        HandModel aOppHand3 = _oppHand3.getHandModel();
+        HandModel aOppHand4 = _oppHand4.getHandModel();
+        HandModel aOppHand5 = _oppHand5.getHandModel();
 
+        List<HandModel> hands = new List<HandModel>() {aHand1, aHand2, aHand3, aHand4, aHand5};
+        List<HandModel> oppHands = new List<HandModel>() {aOppHand1, aOppHand2, aOppHand3, aOppHand4, aOppHand5};
+        analyzer.analyzeHands(hands, oppHands, analyzerCallback);
     }
 
-    void animateFlipLastCard() {
-        GameObject card;
-        for (int i = 1; i <= 5; i++) {
-            if (i == 1) {
-                card = _oppHand1.cards[4];
-            } else if (i == 2) {
-                card = _oppHand2.cards[4];
-            } else if (i == 3) {
-                card = _oppHand3.cards[4];
-            } else if (i == 4) {
-                card = _oppHand4.cards[4];
-            } else {
-                card = _oppHand5.cards[4];
-            }
-            iTween.RotateTo(
-                card.gameObject,
-                iTween.Hash(
-                    "rotation", new Vector3(0, 0, -360),
-                    "time", 0.1f,
-                    "delay", 0.1f * i,
-                    "easetype", iTween.EaseType.linear
-                )
-            );
-        }
-        _isGameOn = true;
+    void analyzerCallback(List<HandModel> playerHands, List<HandModel> oppHands) {
+        _playerEndGameHands = playerHands;
+        _oppEndGameHands = oppHands;
     }
     
     void resetGame() {
         _canDraw = true;
         _playerTotalCards = 0;
         _oppTotalCards = 0;
+        _playerPoints = 0;
+        _oppPoints = 0;
         _deck.cards.AddRange(_hand1.cards);
         _hand1.cards.Clear();
         _deck.cards.AddRange(_hand2.cards);
@@ -507,6 +564,7 @@ public class GameController : MonoBehaviour
         _oppHand5.cards.Clear();
         _playableHand.cards.Clear();
         _oppPlayableHand.cards.Clear();
+        gameCanvas.gameObject.SetActive(false);
 
         for (int i = 0; i < _deck.cards.Count; i++) {
             _deck.cards[i].transform.eulerAngles = new Vector3(0f, 0f, 180f);

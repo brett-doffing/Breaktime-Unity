@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,11 @@ public class CardContainer : MonoBehaviour
             0.1f + (cards.Count * 0.01f),
             transform.position.z + zOffset(cards.Count)
         );
+    }
+
+    public HandModel getHandModel() {
+        List<int> cardIDs = cards.Select(card => card.GetComponent<CardView>().controller.model.id).ToList();
+        return new HandModel(cardIDs);
     }
 
     int zOffset(int position) {
