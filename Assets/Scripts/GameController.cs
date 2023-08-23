@@ -46,6 +46,12 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (Camera.main.aspect < 0.65f) {
+            Camera.main.orthographicSize = 60f * (0.46f / Camera.main.aspect);
+        } else {
+            Camera.main.orthographicSize = 45f * (0.75f / Camera.main.aspect);
+        }
+        
         _hand1 = hand1.gameObject.GetComponent<CardContainer>();
         _hand2 = hand2.gameObject.GetComponent<CardContainer>();
         _hand3 = hand3.gameObject.GetComponent<CardContainer>();
@@ -77,8 +83,11 @@ public class GameController : MonoBehaviour
                         Quaternion.Euler(0f, 0f, 180f)
                     );
                 
-                newCard.gameObject.GetComponent<CardView>().setupWith(cardController);
+                newCard.gameObject.GetComponent<CustomCard>().setupWith(cardController);
                 _deck.cards.Add(newCard.gameObject);
+
+                // string s = Convert.ToString(model.id, 2);
+                // Debug.LogFormat("{0}_{1}\n  {2}: {3}", model.rank, model.suit, model.id, s);
             }
         }
         shuffleDeck();
@@ -114,9 +123,8 @@ public class GameController : MonoBehaviour
                     dealCards();
                 } else if (_deck.cards.Count > 2 && _canDraw == true) {
                     addPlayableCard();
-                } else {
-                    if (_isGameOn == true)
-                        resetGame();
+                } else if (_deck.cards.Count == 2 && _isGameOn) {
+                    resetGame();
                 }
                 break;
             case > 0 and <= 5:
@@ -133,7 +141,7 @@ public class GameController : MonoBehaviour
         if (_deck.cards.Count == 52) {
             for (int i = 1; i <= 10; i++) {
                 GameObject card = _deck.cards[_deck.cards.Count - 1];
-                CardView cardComponent = card.GetComponent<CardView>();
+                CustomCard cardComponent = card.GetComponent<CustomCard>();
                 animateDealtCard(card, i);
                 _deck.cards.Remove(card);
                 cardComponent.controller.model.isFaceUp = !cardComponent.controller.model.isFaceUp;
@@ -141,7 +149,7 @@ public class GameController : MonoBehaviour
             _playerTotalCards += 5;
             _oppTotalCards += 5;
         }
-        Debug.LogFormat("Hand 1 count = {0}", _hand1.cards.Count);
+        // Debug.LogFormat("Hand 1 count = {0}", _hand1.cards.Count);
     }
 
     void addPlayableCard() {
@@ -152,7 +160,7 @@ public class GameController : MonoBehaviour
             searchOppRow();
         }
         GameObject card = _deck.cards[_deck.cards.Count - 1];
-        CardView cardComponent = card.GetComponent<CardView>();
+        CustomCard cardComponent = card.GetComponent<CustomCard>();
         _deck.cards.Remove(card);
         _playableHand.cards.Add(card);
         _canDraw = false;
@@ -165,7 +173,7 @@ public class GameController : MonoBehaviour
 
     void addOppPlayableCard() {
         GameObject card = _deck.cards[_deck.cards.Count - 1];
-        CardView cardComponent = card.GetComponent<CardView>();
+        CustomCard cardComponent = card.GetComponent<CustomCard>();
         _deck.cards.Remove(card);
         _oppPlayableHand.cards.Add(card);
 
@@ -309,43 +317,39 @@ public class GameController : MonoBehaviour
             case 1:
                 if (_hand1.cards.Count == row) {
                     _hand1.addToHand(card);
-                    _canDraw = true;
                 }
                 break;
             case 2:
                 if (_hand2.cards.Count == row) {
                     _hand2.addToHand(card);
-                    _canDraw = true;
                 }
                 break;
             case 3:
                 if (_hand3.cards.Count == row) {
                     _hand3.addToHand(card);
-                    _canDraw = true;
                 }
                 break;
             case 4:
                 if (_hand4.cards.Count == row) {
                     _hand4.addToHand(card);
-                    _canDraw = true;
                 }
                 break;
             case 5:
                 if (_hand5.cards.Count == row) {
                     _hand5.addToHand(card);
-                    _canDraw = true;
                 }
                 break;
             default:
                 break;
         }
+        _canDraw = true;
 
         if (_oppPlayableHand.cards.Count == 0) { addOppPlayableCard(); }
     }
 
     void moveOppPlayableCardToHand(int handNumber) {
         GameObject card = _oppPlayableHand.cards[0];
-        // CardView cardComponent = card.GetComponent<CardView>();
+        // CustomCard cardComponent = card.GetComponent<CustomCard>();
         // Debug.LogFormat("{0}_{1}", cardComponent.controller.model.rank, cardComponent.controller.model.suit);
         // int handNumber = _oppTotalCards / 5;
 
@@ -376,38 +380,38 @@ public class GameController : MonoBehaviour
     void searchOppRow() {
         int rowThreshold = _oppTotalCards / 5;
         GameObject card = _oppPlayableHand.cards[0];
-        CardView cardComponent = card.GetComponent<CardView>();
+        CustomCard cardComponent = card.GetComponent<CustomCard>();
         int cardRank = cardComponent.controller.model.rank;
         int handNumber = 0;
 
         List<int> handRanks;
         for (int i = 1; i <= 5; i++) {
             if (i == 1) {
-                handRanks = _oppHand1.cards.ConvertAll(cardN => cardN.GetComponent<CardView>().controller.model.rank);
+                handRanks = _oppHand1.cards.ConvertAll(cardN => cardN.GetComponent<CustomCard>().controller.model.rank);
                 if (handRanks.Contains(cardRank) && _oppHand1.cards.Count == rowThreshold) {
                     handNumber = 1;
                     break;
                 }
             } else if (i == 2) {
-                handRanks = _oppHand2.cards.ConvertAll(cardN => cardN.GetComponent<CardView>().controller.model.rank);
+                handRanks = _oppHand2.cards.ConvertAll(cardN => cardN.GetComponent<CustomCard>().controller.model.rank);
                 if (handRanks.Contains(cardRank) && _oppHand2.cards.Count == rowThreshold) {
                     handNumber = 2;
                     break;
                 }
             } else if (i == 3) {
-                handRanks = _oppHand3.cards.ConvertAll(cardN => cardN.GetComponent<CardView>().controller.model.rank);
+                handRanks = _oppHand3.cards.ConvertAll(cardN => cardN.GetComponent<CustomCard>().controller.model.rank);
                 if (handRanks.Contains(cardRank) && _oppHand3.cards.Count == rowThreshold) {
                     handNumber = 3;
                     break;
                 }
             } else if (i == 4) {
-                handRanks = _oppHand4.cards.ConvertAll(cardN => cardN.GetComponent<CardView>().controller.model.rank);
+                handRanks = _oppHand4.cards.ConvertAll(cardN => cardN.GetComponent<CustomCard>().controller.model.rank);
                 if (handRanks.Contains(cardRank) && _oppHand4.cards.Count == rowThreshold) {
                     handNumber = 4;
                     break;
                 }
             } else if (i == 5) {
-                handRanks = _oppHand5.cards.ConvertAll(cardN => cardN.GetComponent<CardView>().controller.model.rank);
+                handRanks = _oppHand5.cards.ConvertAll(cardN => cardN.GetComponent<CustomCard>().controller.model.rank);
                 if (handRanks.Contains(cardRank) && _oppHand5.cards.Count == rowThreshold) {
                     handNumber = 5;
                     break;
@@ -467,14 +471,18 @@ public class GameController : MonoBehaviour
                 card = _oppHand5.cards[4];
 
             animateFlipLastCard(card);
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
             showCanvasForHand(i - 1);
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(1.5f);
+            getLostHand(i - 1);
+            yield return new WaitForSeconds(0.5f);
             gameCanvas.gameObject.SetActive(false);
             yield return new WaitForSeconds(1.0f);
         }
-        yield return new WaitForSeconds(1.0f);
         showFinalCanvas();
+        yield return new WaitForSeconds(2.0f);
+        gameCanvas.gameObject.SetActive(false);
+        _isGameOn = true;
     }
 
     void showCanvasForHand(int index) {
@@ -511,7 +519,45 @@ public class GameController : MonoBehaviour
                 "easetype", iTween.EaseType.linear
             )
         );
-        _isGameOn = true;
+    }
+
+    void getLostHand(int index) {
+        if (_playerEndGameHands[index].handWon) {
+            if (index == 0)
+                animateLostHand(_oppHand1);
+            else if (index == 1)
+                animateLostHand(_oppHand2);
+            else if (index == 2)
+                animateLostHand(_oppHand3);
+            else if (index == 3)
+                animateLostHand(_oppHand4);
+            else 
+                animateLostHand(_oppHand5);
+        } else {
+            if (index == 0)
+                animateLostHand(_hand1);
+            else if (index == 1)
+                animateLostHand(_hand2);
+            else if (index == 2)
+                animateLostHand(_hand3);
+            else if (index == 3)
+                animateLostHand(_hand4);
+            else 
+                animateLostHand(_hand5);
+        }
+    }
+
+    void animateLostHand(CardContainer hand) {
+        for (int i = 0; i< 5; i++) {
+            iTween.MoveBy(
+            hand.cards[i].gameObject,
+            iTween.Hash(
+                "z", i * 2,
+                "time", 0.1f,
+                "easetype", iTween.EaseType.linear
+            )
+        );
+        }
     }
 
     void analyzeGame() {

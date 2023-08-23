@@ -37,7 +37,7 @@ public class CardContainer : MonoBehaviour
     }
 
     public HandModel getHandModel() {
-        List<int> cardIDs = cards.Select(card => card.GetComponent<CardView>().controller.model.id).ToList();
+        List<int> cardIDs = cards.Select(card => card.GetComponent<CustomCard>().controller.model.id).ToList();
         return new HandModel(cardIDs);
     }
 

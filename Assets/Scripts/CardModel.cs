@@ -26,7 +26,7 @@ public class CardModel
         get {
             if (rank == 1) {
                 // If the card is an Ace
-                switch (rank) {
+                switch (suit) {
                 case 1: // CLUBS
                     return kPrimes[12] | (12 << 8) | 0x8000 | (1 << (16+12));
                 case 2: // DIAMONDS
