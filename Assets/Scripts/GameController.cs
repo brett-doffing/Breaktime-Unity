@@ -20,6 +20,18 @@ public class GameController : MonoBehaviour
     public GameObject oppPlayableHand;
     public GameObject deck;
     public GameCanvas gameCanvas;
+
+    public GameObject spot1;
+    public GameObject spot2;
+    public GameObject spot3;
+    public GameObject spot4;
+    public GameObject spot5;
+    public GameObject oppSpot1;
+    public GameObject oppSpot2;
+    public GameObject oppSpot3;
+    public GameObject oppSpot4;
+    public GameObject oppSpot5;
+    
     CardContainer _hand1;
     CardContainer _hand2;
     CardContainer _hand3;
@@ -43,6 +55,9 @@ public class GameController : MonoBehaviour
     int _playerPoints = 0;
     int _oppPoints = 0;
 
+    Material _mat;
+    Color _originalHolderColor;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,6 +80,22 @@ public class GameController : MonoBehaviour
         _playableHand = playableHand.gameObject.GetComponent<CardContainer>();
         _oppPlayableHand = oppPlayableHand.gameObject.GetComponent<CardContainer>();
         _deck = deck.gameObject.GetComponent<CardContainer>();
+
+        _mat = Resources.Load("Materials/Holders") as Material;
+        _originalHolderColor = _mat.color;
+
+        spot1.GetComponent<Renderer>().material = Instantiate(_mat);
+        spot2.GetComponent<Renderer>().material = Instantiate(_mat);
+        spot3.GetComponent<Renderer>().material = Instantiate(_mat);
+        spot4.GetComponent<Renderer>().material = Instantiate(_mat);
+        spot5.GetComponent<Renderer>().material = Instantiate(_mat);
+        oppSpot1.GetComponent<Renderer>().material = Instantiate(_mat);
+        oppSpot2.GetComponent<Renderer>().material = Instantiate(_mat);
+        oppSpot3.GetComponent<Renderer>().material = Instantiate(_mat);
+        oppSpot4.GetComponent<Renderer>().material = Instantiate(_mat);
+        oppSpot5.GetComponent<Renderer>().material = Instantiate(_mat);
+
+        // spot1.GetComponent<Renderer>().material.color = Color.cyan;
 
         createDeck();
     }
@@ -241,7 +272,7 @@ public class GameController : MonoBehaviour
             card.gameObject,
             iTween.Hash(
                 "rotation", new Vector3(0, 0, -360),
-                "time", 0.1f,
+                "time", 0.25f,
                 "delay", 0.1f * num,
                 "easetype", iTween.EaseType.linear
             )
@@ -254,7 +285,7 @@ public class GameController : MonoBehaviour
                     0.1f, 
                     handObject.transform.position.z + zOffset(1)
                 ),
-                "time", 0.1f,
+                "time", 0.25f,
                 "delay", 0.1f * num,
                 "easetype", iTween.EaseType.linear
             )
@@ -267,7 +298,7 @@ public class GameController : MonoBehaviour
             card.gameObject,
             iTween.Hash(
                 "rotation", new Vector3(0, 0, -360),
-                "time", 0.1f,
+                "time", 0.25f,
                 "easetype", iTween.EaseType.linear
             )
         );
@@ -275,7 +306,7 @@ public class GameController : MonoBehaviour
             card.gameObject,
             iTween.Hash(
                 "position", new Vector3(playableHand.transform.position.x, 0.1f, 0),
-                "time", 0.1f,
+                "time", 0.25f,
                 "easetype", iTween.EaseType.linear
             )
         );
@@ -286,7 +317,7 @@ public class GameController : MonoBehaviour
             card.gameObject,
             iTween.Hash(
                 "position", new Vector3(oppPlayableHand.transform.position.x, 0.1f, 0),
-                "time", 0.1f,
+                "time", 0.25f,
                 "easetype", iTween.EaseType.linear
             )
         );
@@ -295,7 +326,7 @@ public class GameController : MonoBehaviour
                 card.gameObject,
                 iTween.Hash(
                     "rotation", new Vector3(0, 0, -360),
-                    "time", 0.1f,
+                    "time", 0.25f,
                     "easetype", iTween.EaseType.linear
                 )
             );
@@ -456,31 +487,54 @@ public class GameController : MonoBehaviour
 
     IEnumerator performEndgame() {
         analyzeGame();
+        gameCanvas.gameObject.SetActive(true);
         yield return new WaitForSeconds(1.0f);
         for (int i = 1; i <= 5; i++) {
             GameObject card;
-            if (i == 1) 
+            GameObject spot;
+            GameObject oppSpot;
+            if (i == 1) {
                 card = _oppHand1.cards[4];
-            else if (i == 2) 
+                spot = spot1;
+                oppSpot = oppSpot1;
+            } else if (i == 2) {
                 card = _oppHand2.cards[4];
-            else if (i == 3) 
+                spot = spot2;
+                oppSpot = oppSpot2;
+            } else if (i == 3) {
                 card = _oppHand3.cards[4];
-            else if (i == 4) 
+                spot = spot3;
+                oppSpot = oppSpot3;
+            } else if (i == 4) {
                 card = _oppHand4.cards[4];
-            else 
+                spot = spot4;
+                oppSpot = oppSpot4;
+            } else {
                 card = _oppHand5.cards[4];
-
+                spot = spot5;
+                oppSpot = oppSpot5;
+            }
+                
+            yield return new WaitForSeconds(1.0f);
+            spot.GetComponent<Renderer>().material.color = Color.yellow;
+            string playerText = _playerEndGameHands[i - 1].getHandRankString();            
+            gameCanvas.showPlayerText(playerText);
+            yield return new WaitForSeconds(1.0f);
             animateFlipLastCard(card);
-            yield return new WaitForSeconds(0.5f);
-            showCanvasForHand(i - 1);
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1.0f);
+            oppSpot.GetComponent<Renderer>().material.color = Color.yellow;
+            string oppText = _playerEndGameHands[i - 1].getHandRankString();
+            gameCanvas.showOppText(oppText);            
+            yield return new WaitForSeconds(1.0f);
+            spot.GetComponent<Renderer>().material.color = _originalHolderColor;
+            oppSpot.GetComponent<Renderer>().material.color = _originalHolderColor;
+            yield return new WaitForSeconds(1.0f);
             getLostHand(i - 1);
-            yield return new WaitForSeconds(0.5f);
-            gameCanvas.gameObject.SetActive(false);
+            gameCanvas.hideHandLabels();            
             yield return new WaitForSeconds(1.0f);
         }
         showFinalCanvas();
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(3.0f);
         gameCanvas.gameObject.SetActive(false);
         _isGameOn = true;
     }
@@ -497,16 +551,26 @@ public class GameController : MonoBehaviour
     }
 
     void showFinalCanvas() {
-        string oppText;
-        if (_playerPoints > _oppPoints) {
-            oppText = "You Won!";
-        } else if (_playerPoints < _oppPoints) {
-            oppText = "You Lost";
-        } else {
-            oppText = "Tie Game";
+        // string oppText;
+        // if (_playerPoints > _oppPoints) {
+        //     oppText = "You Won!";
+        // } else if (_playerPoints < _oppPoints) {
+        //     oppText = "You Lost";
+        // } else {
+        //     oppText = "Tie Game";
+        // }
+        // string playerText = String.Format("{0} - {1}", _playerPoints, _oppPoints);
+
+        for (int i = 0; i < 5; i++) {
+            if (_playerEndGameHands[i].handWon) {
+                _playerPoints += 1;
+            } else if (_oppEndGameHands[i].handWon) {
+                _oppPoints += 1;
+            }
         }
-        string playerText = String.Format("{0} - {1}", _playerPoints, _oppPoints);
-        gameCanvas.showCanvasWith(playerText, oppText, true);
+        gameCanvas.showPlayerText(_playerPoints.ToString());
+        gameCanvas.showOppText(_oppPoints.ToString());
+        // gameCanvas.showCanvasWith(playerText, oppText, true);
     }
 
     void animateFlipLastCard(GameObject card) {
@@ -514,7 +578,7 @@ public class GameController : MonoBehaviour
             card.gameObject,
             iTween.Hash(
                 "rotation", new Vector3(0, 0, -360),
-                "time", 0.1f,
+                "time", 0.25f,
                 "delay", 0.1f,
                 "easetype", iTween.EaseType.linear
             )
@@ -553,7 +617,7 @@ public class GameController : MonoBehaviour
             hand.cards[i].gameObject,
             iTween.Hash(
                 "z", i * 2,
-                "time", 0.1f,
+                "time", 0.25f,
                 "easetype", iTween.EaseType.linear
             )
         );
