@@ -528,13 +528,13 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             spot.GetComponent<Renderer>().material.color = _originalHolderColor;
             oppSpot.GetComponent<Renderer>().material.color = _originalHolderColor;
-            yield return new WaitForSeconds(1.0f);
             getLostHand(i - 1);
             gameCanvas.hideHandLabels();            
             yield return new WaitForSeconds(1.0f);
         }
         showFinalCanvas();
         yield return new WaitForSeconds(3.0f);
+        gameCanvas.hideHandLabels();
         gameCanvas.gameObject.SetActive(false);
         _isGameOn = true;
     }
